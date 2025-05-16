@@ -79,6 +79,7 @@
 
       <input type="hidden" name="plik" id="plikURL" />
       <button type="button" onclick="openUploadWidget()">Załaduj potwierdzenie płatności</button>
+      
       <p id="uploadStatus">Nie dodano pliku</p>
 
       <button type="submit">Wyślij</button>
@@ -114,7 +115,7 @@
       e.preventDefault();
       const data = Object.fromEntries(new FormData(form).entries());
 
-      const webhookURL = 'https://script.google.com/macros/s/AKfycbxmu1QLkAZQciAYaKqE7xQHvj5R00cbKsEewAvS9BNmC72-8-jSKVQWx4ZYCXyGAkPmaQ/exec'; // 🔁 podmień na swój URL z Apps Script
+      const webhookURL = 'https://script.google.com/macros/s/AKfycbzeWubTxKRgdqoZTZe4a_BGtFQLhc7oV1daguxuTcphNWf9HZKG7sL-YFJeVIrZoLb9/exec'; // 🔁 podmień na swój URL z Apps Script
 
       try {
         const res = await fetch(webhookURL, {
