@@ -41,102 +41,66 @@
     button:hover {
       background: #333;
     }
+    h1 {
+      margin-bottom: 20px;
+    }
     #uploadStatus {
       font-size: 14px;
       margin-top: -10px;
       color: #555;
-    }
-    h1 {
-      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
   <div class="form-container">
     <h1>Zwrot produktu cyfrowego</h1>
-    <form id="zwrotForm">
+    <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
       <input type="text" name="imie" placeholder="Imię" required />
       <input type="text" name="nazwisko" placeholder="Nazwisko" required />
       <input type="text" name="telefon" placeholder="Numer telefonu" required />
       <input type="email" name="email" placeholder="Email" required />
       <input type="text" name="nrZamowienia" placeholder="Numer zamówienia" required />
-      
+
       <select name="powod" required>
         <option value="">Wybierz powód zwrotu</option>
-        <option value="Produkt nie spełnił moich oczekiwań">Produkt nie spełnił moich oczekiwań</option>
-        <option value="Treści były niezgodne z opisem">Treści były niezgodne z opisem</option>
-        <option value="Zakup dokonany omyłkowo">Zakup dokonany omyłkowo</option>
-        <option value="Problemy techniczne z dostępem">Problemy techniczne z dostępem</option>
-        <option value="Nie otrzymałem/am dostępu do materiałów">Nie otrzymałem/am dostępu do materiałów</option>
-        <option value="Płatność została pobrana wielokrotnie">Płatność została pobrana wielokrotnie</option>
-        <option value="Kurs/coaching nie był aktualny">Kurs/coaching nie był aktualny</option>
-        <option value="Zła jakość nagrania lub materiałów">Zła jakość nagrania lub materiałów</option>
-        <option value="Rezygnacja przed rozpoczęciem korzystania">Rezygnacja przed rozpoczęciem korzystania</option>
-        <option value="Inny powód">Inny powód</option>
+        <option value="Nie spełnił oczekiwań">Nie spełnił oczekiwań</option>
+        <option value="Błąd zakupu">Błąd zakupu</option>
+        <option value="Problemy techniczne">Problemy techniczne</option>
+        <option value="Nie otrzymałem/am dostępu">Nie otrzymałem/am dostępu</option>
+        <option value="Płatność podwójna">Płatność podwójna</option>
+        <option value="Inny">Inny powód</option>
       </select>
 
       <textarea name="uwagi" placeholder="Dodatkowe uwagi (opcjonalnie)"></textarea>
 
       <input type="hidden" name="plik" id="plikURL" />
-      <button type="button" onclick="openUploadWidget()">Załaduj potwierdzenie płatności</button>
-      
+      <button type="button" onclick="openUploadWidget()">Załaduj plik (PDF/obraz)</button>
       <p id="uploadStatus">Nie dodano pliku</p>
 
       <button type="submit">Wyślij</button>
     </form>
-    <p id="statusMsg"></p>
   </div>
 
   <script>
-    const form = document.getElementById('zwrotForm');
-    const statusMsg = document.getElementById('statusMsg');
-
     function openUploadWidget() {
       cloudinary.openUploadWidget({
-        cloudName: 'dpa3ajvly', // 🔁 podmień na swój
-        uploadPreset: 'zwroty', // 🔁 podmień na swój
+        cloudName: 'dpa3ajvly', // 🔁 PODMIEN
+        uploadPreset: 'zwroty', // 🔁 PODMIEN
         sources: ['local', 'url', 'camera'],
         multiple: false,
         resourceType: 'auto',
         clientAllowedFormats: ['pdf', 'jpg', 'jpeg', 'png'],
-        maxFileSize: 5000000 // 5 MB
+        maxFileSize: 5000000
       }, (error, result) => {
         if (!error && result && result.event === "success") {
           document.getElementById('plikURL').value = result.info.secure_url;
-          document.getElementById('uploadStatus').textContent = "Plik załadowany: " + result.info.original_filename;
-        } else if (error) {
-          document.getElementById('uploadStatus').textContent = "Błąd uploadu.";
+          document.getElementById('uploadStatus').textContent = "Plik dodany: " + result.info.original_filename;
+        } else {
+          document.getElementById('uploadStatus').textContent = "Błąd podczas dodawania pliku.";
           console.error("Upload error", error);
         }
       });
     }
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(form).entries());
-
-      const webhookURL = 'https://script.google.com/macros/s/AKfycbyY41oNcD1ijEWfuMvgVP2hPkv_DA8XkMhVISybbHis7ER3JrgAMN7fxw-9ebAS2ELRTA/exec'; // 🔁 podmień na swój URL z Apps Script
-
-      try {
-        const res = await fetch(webhookURL, {
-          method: 'POST',
-          body: JSON.stringify(data),
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        const result = await res.json();
-        if (result.status === 'sukces') {
-          statusMsg.textContent = "Dziękujemy! Zgłoszenie zostało przyjęte.";
-          form.reset();
-          document.getElementById('uploadStatus').textContent = "Nie dodano pliku";
-        } else {
-          statusMsg.textContent = "Coś poszło nie tak. Spróbuj ponownie.";
-        }
-      } catch (err) {
-        console.error(err);
-        statusMsg.textContent = "Błąd połączenia. Spróbuj ponownie.";
-      }
-    });
   </script>
 </body>
 </html>
