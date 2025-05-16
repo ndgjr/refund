@@ -75,7 +75,6 @@
 
       <input type="hidden" name="plik" id="plikURL" />
       <button type="button" onclick="openUploadWidget()">Załaduj plik (PDF/obraz)</button>
-    </p>
       <p id="uploadStatus">Nie dodano pliku</p>
 
       <button type="submit">Wyślij</button>
@@ -85,17 +84,18 @@
   <script>
     function openUploadWidget() {
       cloudinary.openUploadWidget({
-        cloudName: 'dpa3ajvly', // 🔁 PODMIEN
-        uploadPreset: 'refund', // 🔁 PODMIEN
+        cloudName: 'dpa3ajvly',
+        uploadPreset: 'refund',
         sources: ['local', 'url', 'camera'],
         multiple: false,
         resourceType: 'auto',
         clientAllowedFormats: ['pdf', 'jpg', 'jpeg', 'png'],
-        maxFileSize: 5000000
+        maxFileSize: 5000000 // 5 MB
       }, (error, result) => {
         if (!error && result && result.event === "success") {
           document.getElementById('plikURL').value = result.info.secure_url;
-          document.getElementById('uploadStatus').textContent = "Plik dodany: " + result.info.original_filename;
+          document.getElementById('uploadStatus').textContent =
+            "Plik dodany: " + result.info.original_filename;
         } else {
           document.getElementById('uploadStatus').textContent = "Błąd podczas dodawania pliku.";
           console.error("Upload error", error);
