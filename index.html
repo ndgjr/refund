@@ -1,107 +1,30 @@
 <!DOCTYPE html>
-<html lang="pl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Formularz Zwrotu</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #f7f7f7;
-      padding: 40px;
-      margin: 0;
-    }
-    .form-container {
-      max-width: 600px;
-      background: white;
-      padding: 40px;
-      margin: auto;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0 20px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-    button {
-      background: black;
-      color: white;
-      padding: 14px 24px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #333;
-    }
-    h1 {
-      margin-bottom: 20px;
-    }
-    #uploadStatus {
-      font-size: 14px;
-      margin-top: -10px;
-      color: #555;
-    }
-  </style>
-</head>
-<body>
-  <div class="form-container">
-    <h1>Zwrot produktu cyfrowego</h1>
-    <form action="https://formspree.io/f/xkgryrrk" method="POST">
-      <input type="text" name="imie" placeholder="Imię" required />
-      <input type="text" name="nazwisko" placeholder="Nazwisko" required />
-      <input type="text" name="telefon" placeholder="Numer telefonu" required />
-      <input type="email" name="email" placeholder="Email" required />
-      <input type="text" name="nrZamowienia" placeholder="Numer zamówienia" required />
-
-      <select name="powod" required>
-        <option value="">Wybierz powód zwrotu</option>
-        <option value="Nie spełnił oczekiwań">Nie spełnił oczekiwań</option>
-        <option value="Błąd zakupu">Błąd zakupu</option>
-        <option value="Problemy techniczne">Problemy techniczne</option>
-        <option value="Nie otrzymałem/am dostępu">Nie otrzymałem/am dostępu</option>
-        <option value="Płatność podwójna">Płatność podwójna</option>
-        <option value="Inny">Inny powód</option>
-      </select>
-
-      <textarea name="uwagi" placeholder="Dodatkowe uwagi (opcjonalnie)"></textarea>
-
-      <input type="hidden" name="plik" id="plikURL" />
-      <button type="button" onclick="openUploadWidget()">Załaduj plik (PDF/obraz)</button>
-      <p id="uploadStatus">Nie dodano pliku</p>
-
-      <button type="submit">Wyślij</button>
-    </form>
-  </div>
-
-  <script>
-    function openUploadWidget() {
-      cloudinary.openUploadWidget({
-cloudName: 'demo',
-uploadPreset: 'ml_default',
-        sources: ['local', 'url', 'camera'],
-        multiple: false,
-        resourceType: 'auto',
-        clientAllowedFormats: ['pdf', 'jpg', 'jpeg', 'png'],
-        maxFileSize: 5000000 // 5 MB
-      }, (error, result) => {
-        if (!error && result && result.event === "success") {
-          document.getElementById('plikURL').value = result.info.secure_url;
-          document.getElementById('uploadStatus').textContent =
-            "Plik dodany: " + result.info.original_filename;
-        } else {
-          document.getElementById('uploadStatus').textContent = "Błąd podczas dodawania pliku.";
-          console.error("Upload error", error);
-        }
-      });
-    }
-  </script>
-</body>
+<html>
+  <head>
+    <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
+  </head>
+  <body>
+    <button onclick="upload()">Upload pliku</button>
+    <p id="uploadStatus"></p>
+    <script>
+      function upload() {
+        cloudinary.openUploadWidget({
+          cloudName: 'demo',
+          uploadPreset: 'ml_default',
+          sources: ['local', 'url'],
+          multiple: false,
+          resourceType: 'auto',
+          clientAllowedFormats: ['jpg', 'png', 'pdf'],
+          maxFileSize: 5000000
+        }, (error, result) => {
+          if (!error && result && result.event === "success") {
+            document.getElementById('uploadStatus').textContent = "Upload OK: " + result.info.secure_url;
+          } else {
+            document.getElementById('uploadStatus').textContent = "Upload ERROR.";
+            console.error(error);
+          }
+        });
+      }
+    </script>
+  </body>
 </html>
